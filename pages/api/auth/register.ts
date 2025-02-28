@@ -1,14 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next';
+import { findUserByEmail, createUser } from '../../../utils/store';
 import { createToken } from '../../../middleware/auth';
-
-// Temporary user storage for development
-let users = [
-  {
-    _id: '1',
-    email: 'dev@example.com',
-    password: 'password123'
-  }
-];
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'POST') {
@@ -16,39 +8,26 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   try {
-    const { email, password } = req.body;
+    const { email, password, name } = req.body;
 
-    // Simple validation
-    if (!email || !password) {
-      return res.status(400).json({ error: 'Email and password are required' });
+    if (!email || !password || !name) {
+      return res.status(400).json({ error: 'Email, password and name are required' });
     }
 
-    // Check if user already exists
-    if (users.find(user => user.email === email)) {
+    const existingUser = findUserByEmail(email);
+    if (existingUser) {
       return res.status(400).json({ error: 'Email already registered' });
     }
 
-    // Create new user
-    const newUser = {
-      _id: (users.length + 1).toString(),
-      email,
-      password
-    };
-
-    // Store user
-    users.push(newUser);
-
-    // Generate token
-    const token = createToken({
-      sub: newUser._id,
-      email: newUser.email
-    });
+    const user = createUser({ email, password, name });
+    const token = createToken(user.id);
 
     return res.status(201).json({
       token,
       user: {
-        _id: newUser._id,
-        email: newUser.email
+        id: user.id,
+        email: user.email,
+        name: user.name
       }
     });
   } catch (error: any) {
