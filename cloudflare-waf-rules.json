@@ -1,0 +1,24 @@
+{
+  "rules": [
+    {
+      "description": "Block malicious bots",
+      "expression": "(cf.client.bot) and (not cf.verified_bot)",
+      "action": "block"
+    },
+    {
+      "description": "Rate limit API requests",
+      "expression": "starts_with(http.request.uri.path, \"/api/\")",
+      "action": "rate_limit",
+      "rate_limit": {
+        "period": 60,
+        "requests_per_period": 100,
+        "mitigation_timeout": 300
+      }
+    },
+    {
+      "description": "Protect sensitive routes",
+      "expression": "starts_with(http.request.uri.path, \"/api/auth/\")",
+      "action": "managed_challenge"
+    }
+  ]
+} 

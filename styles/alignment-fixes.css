@@ -1,0 +1,198 @@
+/* 
+ * Alignment Fixes for DriveDeal
+ * Ce fichier contient des corrections pour le centrage parfait des éléments
+ */
+
+/* Centrage avec Flexbox - Solution principale */
+.flex-center {
+  display: flex;
+  justify-content: center; /* Centre horizontalement */
+  align-items: center; /* Centre verticalement */
+}
+
+.flex-center-horizontal {
+  display: flex;
+  justify-content: center; /* Centre horizontalement uniquement */
+}
+
+.flex-center-vertical {
+  display: flex;
+  align-items: center; /* Centre verticalement uniquement */
+}
+
+/* Centrage avec Grid - Alternative */
+.grid-center {
+  display: grid;
+  place-items: center; /* Centre parfaitement au milieu */
+}
+
+/* Centrage pour les conteneurs de recherche */
+.search-container,
+.enhanced-search-bar,
+[class*="search-container"],
+[class*="searchBar"] {
+  width: 100%;
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+  display: flex;
+  justify-content: center;
+}
+
+/* Centrage pour les boutons */
+.btn-center,
+button.center {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
+}
+
+/* Centrage pour les sections */
+section.centered,
+.section-centered {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+/* Centrage pour les cartes */
+.card-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1.5rem;
+}
+
+/* Centrage pour les images */
+.image-centered {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 100%;
+  height: auto;
+}
+
+/* Centrage pour les formulaires */
+.form-centered {
+  width: 100%;
+  max-width: 500px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Centrage pour les textes */
+.text-center {
+  text-align: center;
+}
+
+/* Centrage pour les éléments en ligne */
+.inline-center {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+/* Centrage pour les modales */
+.modal-centered {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1000;
+}
+
+/* Centrage pour les éléments absolus */
+.absolute-center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+/* Centrage pour les conteneurs de héros */
+.hero-centered {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  min-height: 60vh;
+}
+
+/* Centrage pour les éléments de navigation */
+.nav-centered {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+}
+
+/* Centrage pour les listes */
+.list-centered {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  list-style-position: inside;
+  padding-left: 0;
+}
+
+/* Centrage pour les tableaux */
+.table-centered {
+  margin-left: auto;
+  margin-right: auto;
+  width: auto;
+}
+
+/* Centrage pour les icônes */
+.icon-centered {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Corrections responsive pour le centrage */
+@media (max-width: 768px) {
+  .flex-center {
+    flex-direction: column;
+  }
+  
+  .search-container,
+  .enhanced-search-bar,
+  [class*="search-container"],
+  [class*="searchBar"] {
+    width: 90%;
+  }
+  
+  .form-centered {
+    width: 90%;
+  }
+  
+  .card-container {
+    gap: 1rem;
+  }
+}
+
+/* Correction pour les éléments qui débordent */
+.overflow-fix {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+/* Utilitaires de marge pour ajuster le centrage */
+.mx-auto {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.my-auto {
+  margin-top: auto;
+  margin-bottom: auto;
+}
+
+.m-auto {
+  margin: auto;
+} 

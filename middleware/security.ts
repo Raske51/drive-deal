@@ -5,6 +5,14 @@ import hpp from 'hpp';
 import { NextApiRequest, NextApiResponse } from 'next';
 import { getClientIp } from 'request-ip';
 
+// Type adapter pour compatibilité avec Express
+type NextApiRequestWithExpress = NextApiRequest & {
+  get: (name: string) => string;
+  header: (name: string) => string;
+  accepts: (...types: string[]) => string | false;
+  acceptsCharsets: (...charsets: string[]) => string | false;
+};
+
 // Rate limiting configuration
 export const limiter = rateLimit({
   windowMs: 60 * 1000, // 1 minute
@@ -12,19 +20,22 @@ export const limiter = rateLimit({
   message: { error: 'Too many requests, please try again later.' },
   standardHeaders: true,
   legacyHeaders: false,
-  keyGenerator: (req) => getClientIp(req) || 'unknown',
+  keyGenerator: (req) => getClientIp(req as any) || 'unknown',
 });
 
 // Security headers middleware
 export const securityHeaders = (req: NextApiRequest, res: NextApiResponse, next: () => void) => {
+  // Adapter les types pour Express
+  const expressReq = req as unknown as NextApiRequestWithExpress;
+  
   // Use Helmet for security headers
-  helmet()(req, res, () => {});
+  helmet()(expressReq as any, res as any, () => {});
 
   // Prevent XSS attacks
-  xss()(req, res, () => {});
+  xss()(expressReq as any, res as any, () => {});
 
   // Prevent HTTP Parameter Pollution
-  hpp()(req, res, () => {});
+  hpp()(expressReq as any, res as any, () => {});
 
   // Set additional security headers
   res.setHeader('X-Content-Type-Options', 'nosniff');
@@ -66,7 +77,7 @@ export const detectSuspiciousActivity = (req: NextApiRequest) => {
 export const suspiciousActivityCheck = (req: NextApiRequest, res: NextApiResponse, next: () => void) => {
   if (detectSuspiciousActivity(req)) {
     console.error('Suspicious activity detected:', {
-      ip: getClientIp(req),
+      ip: getClientIp(req as any),
       path: req.url,
       method: req.method,
     });
@@ -79,7 +90,7 @@ export const suspiciousActivityCheck = (req: NextApiRequest, res: NextApiRespons
 export const applySecurityMiddleware = (handler: any) => {
   return (req: NextApiRequest, res: NextApiResponse) => {
     return new Promise((resolve, reject) => {
-      limiter(req, res, (err: any) => {
+      limiter(req as any, res as any, (err: any) => {
         if (err) return reject(err);
         securityHeaders(req, res, () => {
           suspiciousActivityCheck(req, res, () => {

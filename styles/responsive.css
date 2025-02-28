@@ -1,0 +1,308 @@
+/* 
+ * Responsive Improvements for DriveDeal
+ * Ce fichier contient des améliorations pour l'affichage mobile
+ */
+
+/* Styles généraux pour le responsive */
+html {
+  font-size: 16px;
+}
+
+body {
+  overflow-x: hidden;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Conteneurs fluides */
+.container,
+.container-fluid,
+[class*="container"] {
+  width: 100%;
+  padding-right: 1rem;
+  padding-left: 1rem;
+  margin-right: auto;
+  margin-left: auto;
+}
+
+/* Grille responsive */
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  margin-right: -0.5rem;
+  margin-left: -0.5rem;
+}
+
+.col,
+[class*="col-"] {
+  position: relative;
+  width: 100%;
+  padding-right: 0.5rem;
+  padding-left: 0.5rem;
+}
+
+/* Barre de recherche responsive */
+.search-bar,
+[class*="search-container"],
+[class*="searchBar"] {
+  width: 90%;
+  max-width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Cartes de voitures responsives */
+.car-card,
+[class*="car-card"],
+[class*="carCard"] {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  margin-bottom: 1.5rem;
+}
+
+/* Conteneurs d'images responsifs */
+.image-container,
+[class*="image-container"],
+[class*="imageContainer"] {
+  width: 100%;
+  height: auto;
+  position: relative;
+  padding-top: 56.25%; /* Ratio 16:9 */
+  overflow: hidden;
+}
+
+.image-container img,
+[class*="image-container"] img,
+[class*="imageContainer"] img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Typographie responsive */
+h1 {
+  font-size: 2rem;
+}
+
+h2 {
+  font-size: 1.75rem;
+}
+
+h3 {
+  font-size: 1.5rem;
+}
+
+h4 {
+  font-size: 1.25rem;
+}
+
+h5 {
+  font-size: 1.125rem;
+}
+
+h6 {
+  font-size: 1rem;
+}
+
+p {
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+/* Boutons responsifs */
+button,
+.btn,
+[class*="button"] {
+  padding: 0.75rem 1.25rem;
+  font-size: 1rem;
+}
+
+/* Navigation responsive */
+.navbar,
+[class*="navbar"],
+[class*="nav"] {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.5rem 1rem;
+}
+
+/* Formulaires responsifs */
+input,
+select,
+textarea {
+  width: 100%;
+  padding: 0.75rem;
+  font-size: 1rem;
+}
+
+/* Media queries pour différentes tailles d'écran */
+@media (max-width: 576px) {
+  html {
+    font-size: 14px;
+  }
+  
+  .container {
+    max-width: 100%;
+  }
+  
+  h1 {
+    font-size: 1.75rem;
+  }
+  
+  h2 {
+    font-size: 1.5rem;
+  }
+  
+  h3 {
+    font-size: 1.25rem;
+  }
+  
+  .search-bar,
+  [class*="search-container"],
+  [class*="searchBar"] {
+    width: 100%;
+  }
+  
+  button,
+  .btn,
+  [class*="button"] {
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+  }
+  
+  .hidden-xs {
+    display: none !important;
+  }
+  
+  .car-card,
+  [class*="car-card"],
+  [class*="carCard"] {
+    margin-bottom: 1rem;
+  }
+}
+
+@media (min-width: 576px) and (max-width: 767px) {
+  .container {
+    max-width: 540px;
+  }
+  
+  .hidden-sm {
+    display: none !important;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  .container {
+    max-width: 720px;
+  }
+  
+  .hidden-md {
+    display: none !important;
+  }
+  
+  .car-card,
+  [class*="car-card"],
+  [class*="carCard"] {
+    flex-direction: row;
+  }
+  
+  .image-container,
+  [class*="image-container"],
+  [class*="imageContainer"] {
+    width: 40%;
+    padding-top: 30%; /* Maintient le ratio */
+  }
+}
+
+@media (min-width: 992px) and (max-width: 1199px) {
+  .container {
+    max-width: 960px;
+  }
+  
+  .hidden-lg {
+    display: none !important;
+  }
+}
+
+@media (min-width: 1200px) {
+  .container {
+    max-width: 1140px;
+  }
+  
+  .hidden-xl {
+    display: none !important;
+  }
+}
+
+/* Corrections spécifiques pour les problèmes d'affichage mobile */
+@media (max-width: 768px) {
+  /* Empêcher le débordement horizontal */
+  .row {
+    margin-right: 0;
+    margin-left: 0;
+  }
+  
+  /* Ajuster les marges pour éviter le débordement */
+  .col,
+  [class*="col-"] {
+    padding-right: 0.5rem;
+    padding-left: 0.5rem;
+  }
+  
+  /* Empiler les éléments au lieu de les aligner */
+  .flex-row,
+  [class*="flex-row"] {
+    flex-direction: column !important;
+  }
+  
+  /* Centrer les éléments sur mobile */
+  .text-center-xs {
+    text-align: center !important;
+  }
+  
+  /* Ajuster la taille des images pour éviter le débordement */
+  img {
+    max-width: 100%;
+    height: auto !important;
+  }
+  
+  /* Réduire les paddings excessifs */
+  .container,
+  .container-fluid,
+  [class*="container"],
+  section,
+  [class*="section"] {
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+  }
+  
+  /* Ajuster les marges pour les éléments empilés */
+  .mb-xs-3 {
+    margin-bottom: 1rem !important;
+  }
+  
+  /* Réduire la taille des polices sur mobile */
+  body {
+    font-size: 0.875rem;
+  }
+  
+  /* Ajuster les boutons pour qu'ils soient plus faciles à toucher */
+  button,
+  .btn,
+  [class*="button"],
+  a {
+    min-height: 44px; /* Taille minimale recommandée pour les éléments tactiles */
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+} 

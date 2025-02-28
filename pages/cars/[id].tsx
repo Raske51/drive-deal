@@ -6,8 +6,7 @@ import { Car } from '../../models/Car';
 import { useAuth } from '../../hooks/useAuth';
 import axios from 'axios';
 import toast from 'react-hot-toast';
-import { ObjectId } from 'mongodb';
-import { connectToDatabase } from '../../utils/mongodb';
+import { useRouter } from 'next/router';
 
 interface CarDetailsProps {
   car: Car;
@@ -19,6 +18,12 @@ export default function CarDetails({ car, isFavorite: initialIsFavorite }: CarDe
   const [isFavorite, setIsFavorite] = useState(initialIsFavorite);
   const [isLoading, setIsLoading] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const router = useRouter();
+
+  // Show loading state
+  if (router.isFallback) {
+    return <div>Loading...</div>;
+  }
 
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat('fr-FR', {
@@ -45,10 +50,10 @@ export default function CarDetails({ car, isFavorite: initialIsFavorite }: CarDe
     try {
       setIsLoading(true);
       if (isFavorite) {
-        await axios.delete('/api/favorites', { data: { carId: car._id } });
+        await axios.delete('/api/favorites', { data: { carId: car.id } });
         toast.success('Retiré des favoris');
       } else {
-        await axios.post('/api/favorites', { carId: car._id });
+        await axios.post('/api/favorites', { carId: car.id });
         toast.success('Ajouté aux favoris');
       }
       setIsFavorite(!isFavorite);
@@ -141,7 +146,7 @@ export default function CarDetails({ car, isFavorite: initialIsFavorite }: CarDe
                   Publié le {formatDate(car.createdAt)}
                 </p>
                 <p className="text-sm text-gray-500">
-                  Référence: {car._id}
+                  Référence: {car.id}
                 </p>
               </div>
             </div>
@@ -241,22 +246,7 @@ export default function CarDetails({ car, isFavorite: initialIsFavorite }: CarDe
                       {car.seller.name}
                     </p>
                   )}
-                  <p className="text-gray-700 mt-2">
-                    <span className="font-medium">Localisation : </span>
-                    {car.location.city} ({car.location.department})
-                  </p>
                 </div>
-                {car.seller.phone && (
-                  <a
-                    href={`tel:${car.seller.phone}`}
-                    className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-                  >
-                    <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
-                    </svg>
-                    Appeler le vendeur
-                  </a>
-                )}
               </div>
             </div>
           </div>
@@ -266,45 +256,63 @@ export default function CarDetails({ car, isFavorite: initialIsFavorite }: CarDe
   );
 }
 
-export const getServerSideProps: GetServerSideProps = async ({ params, req }) => {
+export const getStaticPaths = async () => {
   try {
-    const { db } = await connectToDatabase();
+    // Fetch a list of car IDs from the API
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/cars?limit=100`);
+    
+    if (!response.ok) {
+      throw new Error(`Failed to fetch cars: ${response.statusText}`);
+    }
+    
+    const data = await response.json();
+    
+    // Generate paths for each car
+    const paths = data.cars.map((car: Car) => ({
+      params: { id: car.id ? car.id.toString() : '' }
+    }));
+    
+    return {
+      paths,
+      // Fallback: 'blocking' means pages that are not generated at build time will be generated on-demand
+      fallback: 'blocking'
+    };
+  } catch (error) {
+    console.error('Error generating static paths:', error);
+    return {
+      paths: [],
+      fallback: 'blocking'
+    };
+  }
+};
+
+export const getStaticProps = async ({ params }: { params: { id: string } }) => {
+  try {
     const carId = params?.id as string;
-
-    if (!ObjectId.isValid(carId)) {
+    
+    // Fetch car details from API
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/cars/${carId}`);
+    
+    if (!response.ok) {
+      throw new Error(`Failed to fetch car: ${response.statusText}`);
+    }
+    
+    const data = await response.json();
+    
+    // Check if car exists
+    if (!data.car) {
       return {
         notFound: true
       };
     }
-
-    const car = await db.collection('cars').findOne({ _id: new ObjectId(carId) });
-
-    if (!car) {
-      return {
-        notFound: true
-      };
-    }
-
-    // Vérifier si la voiture est dans les favoris de l'utilisateur
-    let isFavorite = false;
-    const token = req.cookies.token;
-
-    if (token) {
-      try {
-        const user = await db.collection('users').findOne({
-          favorites: carId
-        });
-        isFavorite = !!user;
-      } catch (error) {
-        console.error('Error checking favorites:', error);
-      }
-    }
-
+    
     return {
       props: {
-        car: JSON.parse(JSON.stringify(car)), // Serialization pour Next.js
-        isFavorite
-      }
+        car: data.car,
+        isFavorite: false // Default to false for static generation
+      },
+      // Revalidate every hour
+      revalidate: 3600
     };
   } catch (error) {
     console.error('Error fetching car details:', error);

@@ -1,25 +1,23 @@
 import { NextApiResponse } from 'next';
-import { ObjectId } from 'mongodb';
-import { connectToDatabase } from '../../../utils/mongodb';
-import { withAuth, AuthenticatedRequest } from '../../../middleware/auth';
-import { User } from '../../../models/User';
+import { requireAuth, AuthenticatedRequest } from '../../../middleware/auth';
+import { v4 as uuidv4 } from 'uuid';
+import { executeQuery } from '../../../utils/database';
 
 async function handler(
   req: AuthenticatedRequest,
   res: NextApiResponse
 ) {
-  const { db } = await connectToDatabase();
-  const userId = new ObjectId(req.user!.userId);
+  const userId = req.user!.id;
 
   switch (req.method) {
     case 'GET':
       try {
-        const user = await db.collection('users').findOne(
-          { _id: userId },
-          { projection: { alerts: 1 } }
+        const alerts = await executeQuery(
+          `SELECT * FROM alerts WHERE user_id = ? ORDER BY created_at DESC`,
+          [userId]
         );
 
-        return res.status(200).json({ alerts: user?.alerts || [] });
+        return res.status(200).json({ alerts: alerts || [] });
       } catch (error) {
         console.error('Error fetching alerts:', error);
         return res.status(500).json({ message: 'Internal server error' });
@@ -38,21 +36,22 @@ async function handler(
           return res.status(400).json({ message: 'Invalid frequency' });
         }
 
+        const alertId = uuidv4();
+        const now = new Date().toISOString();
+        
+        await executeQuery(
+          `INSERT INTO alerts (id, user_id, criteria, frequency, active, created_at, updated_at) 
+           VALUES (?, ?, ?, ?, ?, ?, ?)`,
+          [alertId, userId, JSON.stringify(criteria), frequency, 1, now, now]
+        );
+
         const alert = {
-          id: new ObjectId().toString(),
+          id: alertId,
           criteria,
           frequency,
           active: true,
-          createdAt: new Date()
+          createdAt: now
         };
-
-        await db.collection('users').updateOne(
-          { _id: userId },
-          { 
-            $push: { alerts: alert },
-            $set: { updatedAt: new Date() }
-          }
-        );
 
         return res.status(201).json({
           message: 'Alert created successfully',
@@ -73,30 +72,41 @@ async function handler(
           return res.status(400).json({ message: 'Alert ID is required' });
         }
 
-        const updateData: any = {};
-        if (criteria) updateData['alerts.$.criteria'] = criteria;
+        const updateParts = [];
+        const params = [];
+        
+        if (criteria) {
+          updateParts.push('criteria = ?');
+          params.push(JSON.stringify(criteria));
+        }
+        
         if (frequency) {
           if (!['daily', 'weekly'].includes(frequency)) {
             return res.status(400).json({ message: 'Invalid frequency' });
           }
-          updateData['alerts.$.frequency'] = frequency;
+          updateParts.push('frequency = ?');
+          params.push(frequency);
         }
-        if (typeof active === 'boolean') updateData['alerts.$.active'] = active;
+        
+        if (typeof active === 'boolean') {
+          updateParts.push('active = ?');
+          params.push(active ? 1 : 0);
+        }
+        
+        updateParts.push('updated_at = ?');
+        params.push(new Date().toISOString());
+        
+        // Add alertId and userId to params
+        params.push(alertId);
+        params.push(userId);
 
-        const result = await db.collection('users').updateOne(
-          { 
-            _id: userId,
-            'alerts.id': alertId
-          },
-          { 
-            $set: {
-              ...updateData,
-              updatedAt: new Date()
-            }
-          }
+        const result = await executeQuery(
+          `UPDATE alerts SET ${updateParts.join(', ')} 
+           WHERE id = ? AND user_id = ?`,
+          params
         );
 
-        if (result.matchedCount === 0) {
+        if (result.changes === 0) {
           return res.status(404).json({ message: 'Alert not found' });
         }
 
@@ -115,15 +125,12 @@ async function handler(
           return res.status(400).json({ message: 'Alert ID is required' });
         }
 
-        const result = await db.collection('users').updateOne(
-          { _id: userId },
-          { 
-            $pull: { alerts: { id: alertId } },
-            $set: { updatedAt: new Date() }
-          }
+        const result = await executeQuery(
+          `DELETE FROM alerts WHERE id = ? AND user_id = ?`,
+          [alertId, userId]
         );
 
-        if (result.matchedCount === 0) {
+        if (result.changes === 0) {
           return res.status(404).json({ message: 'Alert not found' });
         }
 
@@ -140,4 +147,4 @@ async function handler(
   }
 }
 
-export default withAuth(handler); 
+export default requireAuth(handler); 

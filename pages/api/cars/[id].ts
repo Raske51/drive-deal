@@ -1,8 +1,6 @@
 import { NextApiResponse } from 'next';
-import { ObjectId } from 'mongodb';
-import { connectToDatabase } from '../../../utils/mongodb';
-import { Car } from '../../../models/Car';
-import { withAuth, AuthenticatedRequest } from '../../../middleware/auth';
+import { executeQuery } from '../../../utils/database';
+import { requireAuth, AuthenticatedRequest } from '../../../middleware/auth';
 
 async function handler(
   req: AuthenticatedRequest,
@@ -10,17 +8,19 @@ async function handler(
 ) {
   const { id } = req.query;
   
-  if (!ObjectId.isValid(id as string)) {
+  if (!id || typeof id !== 'string') {
     return res.status(400).json({ message: 'Invalid car ID' });
   }
-
-  const { db } = await connectToDatabase();
-  const carId = new ObjectId(id as string);
 
   switch (req.method) {
     case 'GET':
       try {
-        const car = await db.collection('cars').findOne({ _id: carId });
+        const result = await executeQuery(
+          `SELECT * FROM cars WHERE id = ?`,
+          [id]
+        );
+        
+        const car = result.results?.[0];
         
         if (!car) {
           return res.status(404).json({ message: 'Car not found' });
@@ -35,26 +35,46 @@ async function handler(
 
     case 'PUT':
       try {
-        const updateData: Partial<Car> = {
-          ...req.body,
-          updatedAt: new Date()
-        };
-
-        delete updateData._id; // Empêcher la modification de l'ID
-
-        const result = await db.collection('cars').findOneAndUpdate(
-          { _id: carId },
-          { $set: updateData },
-          { returnDocument: 'after' }
+        const updateData = req.body;
+        const now = new Date().toISOString();
+        
+        // Prevent ID modification
+        delete updateData.id;
+        
+        const updateParts = [];
+        const params = [];
+        
+        // Build dynamic update query
+        for (const [key, value] of Object.entries(updateData)) {
+          updateParts.push(`${key} = ?`);
+          params.push(value);
+        }
+        
+        // Add updated_at
+        updateParts.push('updated_at = ?');
+        params.push(now);
+        
+        // Add ID to WHERE clause
+        params.push(id);
+        
+        const result = await executeQuery(
+          `UPDATE cars SET ${updateParts.join(', ')} WHERE id = ?`,
+          params
         );
 
-        if (!result.value) {
+        if (result.changes === 0) {
           return res.status(404).json({ message: 'Car not found' });
         }
-
+        
+        // Get updated car
+        const updatedCarResult = await executeQuery(
+          `SELECT * FROM cars WHERE id = ?`,
+          [id]
+        );
+        
         return res.status(200).json({
           message: 'Car updated successfully',
-          car: result.value
+          car: updatedCarResult.results?.[0]
         });
       } catch (error) {
         console.error('Error updating car:', error);
@@ -64,9 +84,12 @@ async function handler(
 
     case 'DELETE':
       try {
-        const result = await db.collection('cars').deleteOne({ _id: carId });
+        const result = await executeQuery(
+          `DELETE FROM cars WHERE id = ?`,
+          [id]
+        );
 
-        if (result.deletedCount === 0) {
+        if (result.changes === 0) {
           return res.status(404).json({ message: 'Car not found' });
         }
 
@@ -83,4 +106,4 @@ async function handler(
   }
 }
 
-export default withAuth(handler); 
+export default requireAuth(handler); 

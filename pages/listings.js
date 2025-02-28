@@ -367,14 +367,14 @@ export default function Listings() {
         <Header />
 
         <main className="min-h-screen bg-gray-50 pb-16 pt-24 dark:bg-gray-900">
-          <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8 listings-main-container">
             {/* Barre de recherche */}
             <div className="mb-8 rounded-2xl bg-white p-6 shadow-lg dark:bg-gray-800 animate-fadeIn">
               <SearchBar variant="compact" />
             </div>
 
             {/* Titre et compteur de résultats */}
-            <div className="mb-8 flex flex-col justify-between gap-4 md:flex-row md:items-center animate-fadeIn">
+            <div className="mb-8 flex flex-col justify-between gap-4 md:flex-row md:items-center animate-fadeIn page-layout no-bottom-space">
               <div>
                 <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Véhicules disponibles</h1>
                 <p className="mt-2 text-gray-600 dark:text-gray-400">

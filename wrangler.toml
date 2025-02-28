@@ -1,0 +1,10 @@
+name = "drive-deal"
+compatibility_date = "2023-12-01"
+
+# Configuration pour Cloudflare Pages
+pages_build_output_dir = "dist"
+
+# Variables d'environnement
+[vars]
+API_URL = "https://drive-deal-api.anthonydu51170.workers.dev"
+NODE_ENV = "production" 

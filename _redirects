@@ -1,0 +1,21 @@
+# Redirection du HTTP vers HTTPS
+http://:project.pages.dev/* https://:project.pages.dev/:splat 301!
+
+# Redirection des URLs sans slash final vers les URLs avec slash final
+/car/:id  /car/:id/  301
+/cars/:id  /cars/:id/  301
+/search  /search/  301
+/about  /about/  301
+/contact  /contact/  301
+/login  /login/  301
+/register  /register/  301
+/profile  /profile/  301
+/favorites  /favorites/  301
+
+# Redirection des anciennes URLs vers les nouvelles (exemple)
+/automobile/:id  /car/:id/  301
+/vehicle/:id  /car/:id/  301
+/autos  /cars/  301
+
+# Redirection de la page 404 personnalisée
+/*  /404.html  404 

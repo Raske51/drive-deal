@@ -1,5 +1,6 @@
 export interface Car {
-  _id?: string;
+  id?: string;
+  _id?: string; // Pour la rétrocompatibilité
   title: string;
   brand: string;
   model: string;

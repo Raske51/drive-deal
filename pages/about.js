@@ -4,7 +4,7 @@ import Image from 'next/image';
 import { useTheme } from '../hooks/useTheme';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
-import { Users, Award, Shield, Clock, Check, Car, Tool, Headphones } from 'lucide-react';
+import { Users, Award, Shield, Clock, Check, Car, Wrench, Headphones } from 'lucide-react';
 
 export default function About() {
   const { darkMode } = useTheme();
@@ -205,7 +205,7 @@ export default function About() {
                 
                 <div className="flex items-start p-6 bg-white dark:bg-gray-900 rounded-xl shadow-md animate-slideLeft">
                   <div className="mr-4 mt-1">
-                    <Tool className="w-8 h-8 text-primary" />
+                    <Wrench className="w-8 h-8 text-primary" />
                   </div>
                   <div>
                     <h3 className="text-xl font-bold mb-2 text-gray-900 dark:text-white">Expertise Technique</h3>

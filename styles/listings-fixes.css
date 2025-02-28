@@ -1,0 +1,186 @@
+/**
+ * Corrections pour la page des listings - DriveDeal
+ * Ce fichier contient des corrections CSS pour résoudre les problèmes d'espacement
+ * et d'alignement entre les filtres et la grille de véhicules.
+ */
+
+/* 1️⃣ Ajustement de la hauteur du conteneur principal */
+.listings-container {
+  display: flex;
+  align-items: flex-start; /* Assurer que les filtres et les annonces commencent au même niveau */
+  gap: 20px; /* Ajouter un espace uniforme entre les filtres et les véhicules */
+}
+
+.filters {
+  position: relative;
+  top: 0; /* Éviter tout décalage vers le bas */
+  min-height: auto; /* Empêcher un excès d'espace */
+  align-self: flex-start; /* S'assurer que les filtres restent en haut */
+  width: 250px; /* Largeur fixe pour les filtres */
+  flex-shrink: 0; /* Empêcher les filtres de rétrécir */
+  margin-bottom: 0 !important; /* Éliminer toute marge inférieure qui pourrait causer un espace */
+  padding-bottom: 0 !important; /* Éliminer tout padding inférieur qui pourrait causer un espace */
+}
+
+.vehicles-list {
+  flex-grow: 1; /* Permet aux véhicules d'occuper tout l'espace disponible */
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+  align-content: flex-start; /* Empêcher l'étirement vertical */
+  padding-top: 0; /* S'assurer qu'il n'y a pas d'espace au-dessus de la grille */
+  margin-top: 0; /* S'assurer qu'il n'y a pas de marge au-dessus de la grille */
+}
+
+/* 2️⃣ Alternative avec Grid Layout - OPTIMISÉE */
+.page-layout {
+  display: grid;
+  grid-template-columns: 250px 1fr; /* La colonne des filtres fait 250px, la liste des véhicules prend le reste */
+  gap: 20px;
+  align-items: start; /* Aligner les éléments au début de leur conteneur */
+  row-gap: 0; /* Éliminer l'espace vertical entre les rangées */
+  margin-bottom: 0; /* Éliminer toute marge inférieure */
+}
+
+/* Correction pour les conteneurs de cartes */
+.card-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+  align-content: flex-start; /* Empêcher l'étirement vertical */
+}
+
+/* Correction pour les filtres qui pourraient avoir une hauteur excessive */
+.filter-section {
+  margin-bottom: 15px; /* Espace uniforme entre les sections de filtres */
+}
+
+.filter-section:last-child {
+  margin-bottom: 0; /* Supprimer la marge du dernier élément */
+}
+
+/* Correction pour les conteneurs de filtres */
+.filters-container {
+  height: auto !important; /* Forcer la hauteur automatique */
+  min-height: 0 !important; /* Empêcher une hauteur minimale */
+  display: flex;
+  flex-direction: column;
+}
+
+/* Correction pour le conteneur principal des listings */
+.listings-main-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0; /* Éliminer tout espace entre les éléments */
+}
+
+/* 3️⃣ Adaptations Responsive */
+@media (max-width: 768px) {
+  .listings-container {
+    flex-direction: column; /* Empiler les éléments sur mobile */
+  }
+  
+  .page-layout {
+    grid-template-columns: 1fr; /* Sur mobile, les filtres passent en haut */
+    gap: 15px; /* Réduire l'espace sur mobile */
+  }
+  
+  .filters {
+    width: 100%; /* Filtres sur toute la largeur */
+    margin-bottom: 15px !important; /* Espace entre les filtres et la liste */
+  }
+  
+  .vehicles-list {
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); /* Cartes légèrement plus petites sur mobile */
+  }
+}
+
+/* Correction pour éviter les espaces blancs excessifs */
+.no-bottom-space {
+  margin-bottom: 0 !important;
+  padding-bottom: 0 !important;
+}
+
+/* Correction pour les conteneurs qui pourraient avoir une hauteur fixe */
+.auto-height {
+  height: auto !important;
+  min-height: 0 !important;
+}
+
+/* Correction pour les éléments qui pourraient avoir une position absolue */
+.filters-wrapper {
+  position: relative;
+  height: auto !important; /* Forcer la hauteur automatique */
+  min-height: 0 !important; /* Empêcher une hauteur minimale */
+}
+
+/* Correction pour les éléments qui pourraient avoir un z-index élevé */
+.filters-sticky {
+  position: sticky;
+  top: 20px; /* Distance du haut de la page lors du défilement */
+  max-height: calc(100vh - 40px); /* Hauteur maximale pour éviter le débordement */
+  overflow-y: auto; /* Permettre le défilement si les filtres sont trop longs */
+}
+
+/* Correction pour les éléments qui pourraient avoir des marges ou paddings excessifs */
+.trim-spacing {
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+/* Correction pour les éléments qui pourraient avoir des bordures causant des espaces */
+.no-border-space {
+  border: none !important;
+  outline: none !important;
+}
+
+/* Correction pour les éléments qui pourraient avoir des hauteurs fixes */
+.flexible-height {
+  height: auto !important;
+  max-height: none !important;
+  min-height: 0 !important;
+}
+
+/* Correction pour les éléments qui pourraient avoir des largeurs fixes */
+.flexible-width {
+  width: auto !important;
+  max-width: none !important;
+  min-width: 0 !important;
+}
+
+/* Correction pour les éléments qui pourraient avoir des marges négatives */
+.no-negative-margin {
+  margin: 0 !important;
+}
+
+/* Correction pour les éléments qui pourraient avoir des positions absolues */
+.position-reset {
+  position: static !important;
+}
+
+/* Correction pour les éléments qui pourraient avoir des transformations */
+.transform-reset {
+  transform: none !important;
+}
+
+/* Correction pour les éléments qui pourraient avoir des overflows */
+.overflow-visible {
+  overflow: visible !important;
+}
+
+/* Correction pour les éléments qui pourraient avoir des display incorrects */
+.display-block {
+  display: block !important;
+}
+
+/* Correction pour les éléments qui pourraient avoir des floats */
+.float-none {
+  float: none !important;
+}
+
+/* Correction pour les éléments qui pourraient avoir des clearfix manquants */
+.clearfix::after {
+  content: "";
+  display: table;
+  clear: both;
+} 

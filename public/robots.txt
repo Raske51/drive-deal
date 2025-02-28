@@ -1,0 +1,19 @@
+# robots.txt pour DriveDeal
+# https://drive-deal.pages.dev/
+
+User-agent: *
+Allow: /
+
+# Interdire l'accès aux pages d'administration
+Disallow: /admin/
+Disallow: /dashboard/
+Disallow: /settings/
+
+# Interdire l'accès aux pages de profil utilisateur
+Disallow: /profile/
+
+# Interdire l'accès aux API
+Disallow: /api/
+
+# Sitemap
+Sitemap: https://drive-deal.pages.dev/api/sitemap 

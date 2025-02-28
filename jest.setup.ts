@@ -1,3 +1,5 @@
+// Add Jest types
+import '@types/jest';
 import '@testing-library/jest-dom';
 
 // Mock next/router

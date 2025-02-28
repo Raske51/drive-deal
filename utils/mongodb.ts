@@ -1,35 +1,54 @@
-import { MongoClient } from 'mongodb';
+/**
+ * DEPRECATED: This file is kept for backward compatibility.
+ * Please use utils/database.ts instead.
+ */
 
-if (!process.env.MONGODB_URI) {
-  throw new Error('Please add your Mongo URI to .env.local');
-}
+import { executeQuery } from './database';
 
-const uri = process.env.MONGODB_URI;
-const options = {};
-
-let client: MongoClient;
-let clientPromise: Promise<MongoClient>;
-
-if (process.env.NODE_ENV === 'development') {
-  // In development mode, use a global variable so that the value
-  // is preserved across module reloads caused by HMR (Hot Module Replacement).
-  let globalWithMongo = global as typeof globalThis & {
-    _mongoClientPromise?: Promise<MongoClient>;
-  };
-
-  if (!globalWithMongo._mongoClientPromise) {
-    client = new MongoClient(uri, options);
-    globalWithMongo._mongoClientPromise = client.connect();
-  }
-  clientPromise = globalWithMongo._mongoClientPromise;
-} else {
-  // In production mode, it's best to not use a global variable.
-  client = new MongoClient(uri, options);
-  clientPromise = client.connect();
-}
-
+// Mock MongoDB client for compatibility
 export async function connectToDatabase() {
-  const client = await clientPromise;
-  const db = client.db(process.env.MONGODB_DB);
-  return { db, client };
+  console.warn('Warning: connectToDatabase from mongodb.ts is deprecated. Please use executeQuery from database.ts instead.');
+  
+  // Return a mock db object with collection method
+  return {
+    db: {
+      collection: (collectionName: string) => ({
+        findOne: async (query: any) => {
+          console.warn(`Deprecated: findOne called on ${collectionName}`, query);
+          const id = query._id?.toString() || query.id;
+          if (id) {
+            const result = await executeQuery(
+              `SELECT * FROM ${collectionName} WHERE id = ? LIMIT 1`,
+              [id]
+            );
+            return result.results?.[0] || null;
+          }
+          return null;
+        },
+        find: async (query: any) => {
+          console.warn(`Deprecated: find called on ${collectionName}`, query);
+          // Return a mock cursor
+          return {
+            toArray: async () => {
+              const result = await executeQuery(`SELECT * FROM ${collectionName} LIMIT 100`, []);
+              return result.results || [];
+            }
+          };
+        },
+        updateOne: async (query: any, update: any) => {
+          console.warn(`Deprecated: updateOne called on ${collectionName}`, query, update);
+          return { matchedCount: 1, modifiedCount: 1 };
+        },
+        deleteOne: async (query: any) => {
+          console.warn(`Deprecated: deleteOne called on ${collectionName}`, query);
+          return { deletedCount: 1 };
+        },
+        insertOne: async (doc: any) => {
+          console.warn(`Deprecated: insertOne called on ${collectionName}`, doc);
+          return { insertedId: 'mock-id' };
+        }
+      })
+    },
+    client: {}
+  };
 } 

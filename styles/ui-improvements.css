@@ -1,0 +1,145 @@
+/* 
+ * UI Improvements for DriveDeal
+ * Ce fichier contient des améliorations de contraste et de lisibilité pour l'interface utilisateur
+ */
+
+/* Amélioration du contraste pour une meilleure lisibilité */
+body {
+  background-color: #f8f8f8; /* Couleur plus lisible */
+  color: #333; /* Amélioration du contraste */
+}
+
+/* Amélioration des boutons */
+.btn-primary,
+button.bg-primary,
+[type="button"].bg-primary,
+[type="submit"].bg-primary {
+  background-color: #ff5c00 !important; /* Couleur vive pour CTA */
+  color: white !important;
+  font-weight: bold !important;
+  padding: 10px 20px !important;
+  border-radius: 8px !important;
+  transition: all 0.3s ease !important;
+}
+
+.btn-primary:hover,
+button.bg-primary:hover,
+[type="button"].bg-primary:hover,
+[type="submit"].bg-primary:hover {
+  background-color: #e04a00 !important; /* Légère variation au survol */
+  transform: translateY(-2px) !important;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Amélioration de la barre de recherche */
+.search-bar,
+[class*="search-container"] input,
+[class*="searchBar"] input {
+  background: white !important;
+  border-radius: 12px !important;
+  padding: 15px !important;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1) !important;
+  transition: all 0.3s ease-in-out !important;
+  border: 2px solid transparent !important;
+}
+
+.search-bar:focus-within,
+[class*="search-container"] input:focus,
+[class*="searchBar"] input:focus {
+  box-shadow: 0px 6px 14px rgba(0, 0, 0, 0.2) !important;
+  border-color: #ff5c00 !important;
+  outline: none !important;
+}
+
+/* Amélioration des liens */
+a {
+  color: #ff5c00 !important;
+  transition: all 0.3s ease !important;
+}
+
+a:hover {
+  color: #e04a00 !important;
+  text-decoration: underline !important;
+}
+
+/* Amélioration des cartes */
+.card,
+[class*="car-card"],
+[class*="carCard"] {
+  border-radius: 12px !important;
+  overflow: hidden !important;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05) !important;
+  transition: all 0.3s ease !important;
+}
+
+.card:hover,
+[class*="car-card"]:hover,
+[class*="carCard"]:hover {
+  transform: translateY(-5px) !important;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Amélioration des étiquettes de prix */
+[class*="price"],
+.price {
+  color: #ff5c00 !important;
+  font-weight: bold !important;
+  font-size: 1.2em !important;
+}
+
+/* Amélioration des en-têtes */
+h1, h2, h3, h4, h5, h6 {
+  color: #333 !important;
+  font-weight: bold !important;
+  margin-bottom: 0.5em !important;
+}
+
+/* Amélioration des formulaires */
+input, select, textarea {
+  border-radius: 8px !important;
+  padding: 10px 12px !important;
+  border: 1px solid #ddd !important;
+  transition: all 0.3s ease !important;
+}
+
+input:focus, select:focus, textarea:focus {
+  border-color: #ff5c00 !important;
+  box-shadow: 0 0 0 3px rgba(255, 92, 0, 0.2) !important;
+  outline: none !important;
+}
+
+/* Amélioration des labels */
+label {
+  color: #555 !important;
+  font-weight: 500 !important;
+  margin-bottom: 0.5em !important;
+}
+
+/* Amélioration du mode sombre */
+@media (prefers-color-scheme: dark) {
+  body {
+    background-color: #121212 !important;
+    color: #f0f0f0 !important;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    color: #f0f0f0 !important;
+  }
+  
+  .card,
+  [class*="car-card"],
+  [class*="carCard"] {
+    background-color: #1e1e1e !important;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2) !important;
+  }
+  
+  input, select, textarea {
+    background-color: #2a2a2a !important;
+    border-color: #444 !important;
+    color: #f0f0f0 !important;
+  }
+  
+  label {
+    color: #ccc !important;
+  }
+} 
