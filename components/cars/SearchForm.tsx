@@ -2,29 +2,22 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { CarSearchParams } from '../../models/Car';
 
+type FuelType = "essence" | "diesel" | "électrique" | "hybride" | "gpl";
+type TransmissionType = "manuelle" | "automatique";
+type SellerType = "particulier" | "professionnel";
+
 interface SearchFormProps {
   initialValues?: Partial<CarSearchParams>;
   onSearch: (params: CarSearchParams) => void;
 }
 
+const fuels: FuelType[] = ["essence", "diesel", "électrique", "hybride", "gpl"];
+const transmissions: TransmissionType[] = ["manuelle", "automatique"];
+const sellerTypes: SellerType[] = ["particulier", "professionnel"];
+
 export default function SearchForm({ initialValues, onSearch }: SearchFormProps) {
   const router = useRouter();
-  const [formData, setFormData] = useState<CarSearchParams>({
-    brand: '',
-    model: '',
-    minPrice: undefined,
-    maxPrice: undefined,
-    minYear: undefined,
-    maxYear: undefined,
-    fuel: [],
-    transmission: [],
-    location: {
-      department: ''
-    },
-    sellerType: [],
-    sortBy: 'createdAt',
-    sortOrder: 'desc'
-  });
+  const [formData, setFormData] = useState<Partial<CarSearchParams>>(initialValues || {});
 
   useEffect(() => {
     if (initialValues) {
@@ -51,18 +44,19 @@ export default function SearchForm({ initialValues, onSearch }: SearchFormProps)
   const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, checked } = e.target;
     setFormData(prev => {
-      const array = prev[name as keyof CarSearchParams] as string[];
-      if (checked) {
-        return { ...prev, [name]: [...array, value] };
-      } else {
-        return { ...prev, [name]: array.filter(item => item !== value) };
-      }
+      const currentArray = (prev[name as keyof CarSearchParams] as any[]) || [];
+      return {
+        ...prev,
+        [name]: checked
+          ? [...currentArray, value]
+          : currentArray.filter(item => item !== value)
+      };
     });
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onSearch(formData);
+    onSearch(formData as CarSearchParams);
   };
 
   return (
@@ -171,18 +165,18 @@ export default function SearchForm({ initialValues, onSearch }: SearchFormProps)
               Carburant
             </legend>
             <div className="space-y-2">
-              {['essence', 'diesel', 'électrique', 'hybride', 'gpl'].map((fuel) => (
+              {fuels.map((fuel) => (
                 <div key={fuel} className="flex items-center">
                   <input
                     type="checkbox"
                     id={`fuel-${fuel}`}
                     name="fuel"
                     value={fuel}
-                    checked={formData.fuel?.includes(fuel)}
+                    checked={formData.fuel?.includes(fuel as FuelType)}
                     onChange={handleCheckboxChange}
                     className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
                   />
-                  <label htmlFor={`fuel-${fuel}`} className="ml-2 text-sm text-gray-700">
+                  <label htmlFor={`fuel-${fuel}`} className="ml-3 text-sm text-gray-600">
                     {fuel.charAt(0).toUpperCase() + fuel.slice(1)}
                   </label>
                 </div>
@@ -198,18 +192,18 @@ export default function SearchForm({ initialValues, onSearch }: SearchFormProps)
               Transmission
             </legend>
             <div className="space-y-2">
-              {['manuelle', 'automatique'].map((transmission) => (
+              {transmissions.map((transmission) => (
                 <div key={transmission} className="flex items-center">
                   <input
                     type="checkbox"
                     id={`transmission-${transmission}`}
                     name="transmission"
                     value={transmission}
-                    checked={formData.transmission?.includes(transmission)}
+                    checked={formData.transmission?.includes(transmission as TransmissionType)}
                     onChange={handleCheckboxChange}
                     className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
                   />
-                  <label htmlFor={`transmission-${transmission}`} className="ml-2 text-sm text-gray-700">
+                  <label htmlFor={`transmission-${transmission}`} className="ml-3 text-sm text-gray-600">
                     {transmission.charAt(0).toUpperCase() + transmission.slice(1)}
                   </label>
                 </div>
@@ -225,18 +219,18 @@ export default function SearchForm({ initialValues, onSearch }: SearchFormProps)
               Type de vendeur
             </legend>
             <div className="space-y-2">
-              {['particulier', 'professionnel'].map((type) => (
+              {sellerTypes.map((type) => (
                 <div key={type} className="flex items-center">
                   <input
                     type="checkbox"
                     id={`sellerType-${type}`}
                     name="sellerType"
                     value={type}
-                    checked={formData.sellerType?.includes(type)}
+                    checked={formData.sellerType?.includes(type as SellerType)}
                     onChange={handleCheckboxChange}
                     className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
                   />
-                  <label htmlFor={`sellerType-${type}`} className="ml-2 text-sm text-gray-700">
+                  <label htmlFor={`sellerType-${type}`} className="ml-3 text-sm text-gray-600">
                     {type.charAt(0).toUpperCase() + type.slice(1)}
                   </label>
                 </div>
