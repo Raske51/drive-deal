@@ -7,10 +7,10 @@ config();
 // Validate and transform environment variables
 export const env = cleanEnv(process.env, {
   // Authentication
-  JWT_SECRET: str({ length: { min: 32 } }),
-  JWT_REFRESH_SECRET: str({ length: { min: 32 } }),
-  PASSWORD_PEPPER: str({ length: { min: 32 } }),
-  SESSION_SECRET: str({ length: { min: 32 } }),
+  JWT_SECRET: str({ minLength: 32 }),
+  JWT_REFRESH_SECRET: str({ minLength: 32 }),
+  PASSWORD_PEPPER: str({ minLength: 32 }),
+  SESSION_SECRET: str({ minLength: 32 }),
 
   // Database
   MONGODB_URI: url(),
@@ -45,7 +45,7 @@ export const env = cleanEnv(process.env, {
 
   // Security
   CORS_ORIGIN: str(),
-  ENCRYPTION_KEY: str({ length: { min: 32 } }),
+  ENCRYPTION_KEY: str({ minLength: 32 }),
   ALLOWED_FILE_TYPES: str(),
   MAX_FILE_SIZE: num({ default: 5242880 }), // 5MB
 
@@ -110,15 +110,15 @@ export const security = {
 
   // File upload
   fileUpload: {
-    maxSize: env.MAX_FILE_SIZE,
-    allowedTypes: env.ALLOWED_FILE_TYPES.split(','),
+    maxSize: 5 * 1024 * 1024, // 5MB
+    allowedTypes: ['image/jpeg', 'image/png', 'application/pdf'],
   },
 
   // JWT configuration
   jwt: {
     accessToken: {
       secret: env.JWT_SECRET,
-      expiresIn: '15m',
+      expiresIn: '1h',
     },
     refreshToken: {
       secret: env.JWT_REFRESH_SECRET,
@@ -128,9 +128,7 @@ export const security = {
 
   // Encryption
   encryption: {
-    key: env.ENCRYPTION_KEY,
-    algorithm: 'aes-256-gcm',
-    enabled: env.ENABLE_FILE_ENCRYPTION,
+    enabled: false, // Disabled for simple deployment
   },
 
   // 2FA
