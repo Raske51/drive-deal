@@ -1,0 +1,48 @@
+{
+  "sources": ["lacentrale", "leboncoin", "leparking", "autoscout24"],
+  "search_params": {
+    "brands": ["Renault", "Peugeot", "Citroen", "Volkswagen", "Toyota", "BMW", "Mercedes", "Audi"],
+    "max_price": 50000,
+    "max_year": 2024,
+    "min_year": 2015,
+    "max_km": 150000,
+    "fuel_types": ["Essence", "Diesel", "Hybride", "Electrique"],
+    "transmission": ["Manuelle", "Automatique"],
+    "regions": ["Ile-de-France", "Provence-Alpes-Côte d'Azur", "Auvergne-Rhône-Alpes"]
+  },
+  "database": {
+    "type": "json",
+    "path": "scrapers/data/cars.json",
+    "mysql_config": {
+      "host": "localhost",
+      "user": "root",
+      "password": "",
+      "database": "car_scraper"
+    }
+  },
+  "images": {
+    "download": true,
+    "max_per_car": 10,
+    "path": "scrapers/data/images"
+  },
+  "proxy": {
+    "use_proxy": false,
+    "proxy_list": []
+  },
+  "scheduling": {
+    "enabled": false,
+    "time": "03:00"
+  },
+  "scraping": {
+    "delay_between_requests": 2,
+    "max_retries": 3,
+    "timeout": 30,
+    "max_pages_per_source": 5,
+    "headless": true
+  },
+  "user_agents": [
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
+    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.1.1 Safari/605.1.15",
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:89.0) Gecko/20100101 Firefox/89.0"
+  ]
+} 
